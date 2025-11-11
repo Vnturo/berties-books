@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Bertie's Bargains</title>
+  </head>
+  <body>
+    
+    <h1>Bargain Books</h1>
+    <h2>Here are all the books priced under £20:</h2>
+
+    <ul>
+      <% availableBooks.forEach(function(book) { %>
+        
+        <li>
+          <%= book.name %>, £<%= book.price %>
+        </li>
+      
+      <% }); %>
+    </ul>
+  
+  </body>
+</html>

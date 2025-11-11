@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Search Results</title>
+  </head>
+  <body>
+    
+    <h1>Search Results for "<%= keyword %>"</h1>
+
+    <ul>
+      <% availableBooks.forEach(function(book) { %>
+        
+        <li>
+          <%= book.name %>, £<%= book.price %>
+        </li>
+      
+      <% }); %>
+    </ul>
+
+    <% if (availableBooks.length === 0) { %>
+      <p>No books found matching that name.</p>
+    <% } %>
+
+    <br>
+    <a href="/books/search">Search again</a>
+
+  </body>
+</html>
