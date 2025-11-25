@@ -3,6 +3,14 @@ const express = require("express")
 const router = express.Router()
 const bcrypt = require('bcrypt')
 
+const redirectLogin = (req, res, next) => {
+    if (!req.session.userId ) {
+      res.redirect('./login') // redirect to the login page
+    } else { 
+        next (); // move to the next middleware function
+    } 
+}
+
 router.get('/register', function (req, res, next) {
     res.render('register.ejs')
 })
@@ -36,7 +44,7 @@ router.post('/registered', function (req, res, next) {
     })
 }); 
 
-router.get('/list', function (req, res, next) {
+router.get('/list', redirectLogin, function (req, res, next) {
     // Query database to get all the users
     let sqlquery = "SELECT * FROM users"; 
 
@@ -49,6 +57,7 @@ router.get('/list', function (req, res, next) {
         res.render("listusers.ejs", { availableUsers: result });
      });
 });
+
 router.get('/login', function (req, res, next) {
     res.render('login.ejs')
 });
@@ -61,17 +70,18 @@ router.post('/loggedin', function (req, res, next) {
             return next(err)
         }
         if (results.length === 0) {
-            return res.send('User not found')
+            return res.render('incorrectpassword.ejs');
         }
         const hashedPassword = results[0].hashedPassword
         bcrypt.compare(plainPassword, hashedPassword, function(err, compareResult) {
             
             if (compareResult == true) {
                 // Insert audit log entry
+                req.session.userId = req.body.username;
                 let auditQuery = "INSERT INTO audit_log (username, action) VALUES (?, 'SUCCESSFUL_LOGIN')";
                 db.query(auditQuery, [username], (auditErr, auditRes) => {
                     // Log the success message after audit log is inserted
-                    res.send("Login successful! Welcome " + results[0].first_name); 
+                    res.render('loggedin.ejs', { user: results[0] }); 
                 });
             } else {
                 // Insert audit log entry
@@ -85,7 +95,7 @@ router.post('/loggedin', function (req, res, next) {
     });
 });
 
-router.get('/audit', function (req, res, next) {
+router.get('/audit', redirectLogin, function (req, res, next) {
 let sqlquery = "SELECT username, action, timestamp FROM audit_log ORDER BY timestamp DESC"
     db.query(sqlquery, (err, result) => {    
     if (err) {
@@ -94,5 +104,7 @@ let sqlquery = "SELECT username, action, timestamp FROM audit_log ORDER BY times
         res.render("audit.ejs", { auditLogs: result });
         });
 });
+
+
 // Export the router object so index.js can access it
 module.exports = router

@@ -93,7 +93,8 @@ The following routes are available:
 *  `insert_test_data.sql`: SQL script to populate the `books` table with 3 initial records.
 *  `package.json`: Lists project dependencies (Express, EJS, mysql2).
 * `.gitignore`: Instructs Git to ignore the `node_modules` folder.
-
+# Changes
+## 18/11/2025 Week 7
 ## DOTENV Application
 The database connection code in `index.js` was modified to remove hardcoded credentials (like the password) to mitigate the security risk of storing sensitive information in a public GitHub repository .
 
@@ -115,3 +116,22 @@ Database Storage: A new table named `audit_log` was created in the database to s
 Recording Mechanism: The `router.post('/loggedin')` function in `users.js` was modified to execute an `INSERT` query into the `audit_log` table within the respective success and failure callbacks of the `bcrypt.compare` function.
 
 Display Route: A new GET route, `/users/audit`, was implemented. This route executes a `SELECT` query on the `audit_log` table and passes the full history to the `audit.ejs` template for display.
+
+## 25/11/2025 Week 8
+Part A of this week I implemented these changes:
+1. **Session Management:** I used the `express-session` module to configure the `index.js` to handle the user sessions.
+2. **Login Middleware:**  I used `redirectLogin` which was created to act as a gatekeeper to check for a valid session ID before allowing access to a route.
+3. **Session Creation:** When successfully logged in using `(POST /loggedin)` the users username is saved to the session using `(req.session.userId = req.body.username)`. 
+4. **Logout Function:** A `/logout` route was implemented using `req.session.destroy()` to end the users session.
+
+## Access Restrictions 
+Access control was added to protect all data modification and viewing pages. Users that are not logged in are immediately redirected to the `/users/login` page when attempting to access these routes:
+
+| Route | Purpose | Access Restricted |
+| `/books/search` | Displays the search form | Yes |
+| `/books/addbook` | Displays the form to add a new book. | Yes |
+| `/books/bookadded` | Handles the database INSERT operation. | Yes |
+| `/books/list` | Displays the general list of books. | Yes |
+| `/books/bargainbooks` | Displays the filtered list of books. | Yes |
+| `/books/listusers` | Displays registered usernames and emails. | Yes |
+| `/books/audit` | Displays sensitive login history. | Yes |

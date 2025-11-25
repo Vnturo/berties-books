@@ -1,13 +1,19 @@
 // Create a new router
 const express = require("express")
 const router = express.Router()
-
-router.get('/search',function(req, res, next){
+const redirectLogin = (req, res, next) => {
+    if (!req.session.userId ) {
+      res.redirect('/users/login') // redirect to the login page
+    } else { 
+        next (); // move to the next middleware function
+    } 
+}
+router.get('/search', redirectLogin, function(req, res, next){
     res.render("search.ejs")
 });
 
 // Handle the search request
-router.get('/search-result', function (req, res, next) {
+router.get('/search-result', redirectLogin, function (req, res, next) {
     let keyword = req.query.keyword;
 
     // Change the SQL to use 'LIKE' instead of '='
@@ -26,7 +32,7 @@ router.get('/search-result', function (req, res, next) {
      });
 });
 
-router.get('/list', function(req, res, next) {
+router.get('/list', redirectLogin, function(req, res, next) {
         let sqlquery = "SELECT * FROM books"; // query database to get all the books
         // execute sql query
         db.query(sqlquery, (err, result) => {
@@ -38,11 +44,11 @@ router.get('/list', function(req, res, next) {
     });
 
 // Add a new book - display the form
-router.get('/addbook', function (req, res, next) {
+router.get('/addbook', redirectLogin, function (req, res, next) {
     res.render("addbook.ejs")
 });
 
-router.post('/bookadded', function (req, res, next) {
+router.post('/bookadded', redirectLogin, function (req, res, next) {
     // saving data in database
     let sqlquery = "INSERT INTO books (name, price) VALUES (?,?)"
     // execute sql query
@@ -56,7 +62,7 @@ router.post('/bookadded', function (req, res, next) {
     })
 });
 
-router.get('/bargainbooks', function(req, res, next) {
+router.get('/bargainbooks', redirectLogin, function(req, res, next) {
     // This SQL query is the only part that's really different!
     let sqlquery = "SELECT * FROM books WHERE price < 20"; 
 
