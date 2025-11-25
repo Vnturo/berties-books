@@ -128,6 +128,7 @@ Part A of this week I implemented these changes:
 Access control was added to protect all data modification and viewing pages. Users that are not logged in are immediately redirected to the `/users/login` page when attempting to access these routes:
 
 | Route | Purpose | Access Restricted |
+| :--- | :--- | :--- |
 | `/books/search` | Displays the search form | Yes |
 | `/books/addbook` | Displays the form to add a new book. | Yes |
 | `/books/bookadded` | Handles the database INSERT operation. | Yes |
