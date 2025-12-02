@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Weather Forecast</title>
+    <link rel="stylesheet" type="text/css" href="/main.css" />
+  </head>
+  <body>
+    <h1>Weather Forecast</h1>
+
+    <form action="/weather" method="GET">
+      <label for="city">Enter City Name:</label>
+      <input type="text" name="city" id="city" placeholder="e.g. London" required>
+      <button type="submit">Get Forecast</button>
+    </form>
+
+    <br>
+
+    <% if (error) { %>
+        <p style="color:red; font-weight: bold;">
+            <%= error %>
+        </p>
+    <% } %>
+
+    <% if (weather) { %>
+      <div class="weather-result">
+        <p>
+            It is <strong><%= weather.main.temp %></strong> degrees in <%= weather.name %>!
+        </p>
+        <p>
+            The humidity now is: <%= weather.main.humidity %>%
+        </p>
+        <p>
+            Wind Speed: <%= weather.wind.speed %> m/s
+        </p>
+        <p>
+            Description: <%= weather.weather[0].description %>
+        </p>
+      </div>
+    <% } %>
+
+    <p><a href="/">Return to Home Page</a></p>
+  </body>
+</html>
